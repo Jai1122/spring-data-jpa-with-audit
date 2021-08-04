@@ -2,13 +2,17 @@ package com.jaiplays.services.jpa.controller;
 
 import com.jaiplays.services.jpa.dto.CommentsDTO;
 import com.jaiplays.services.jpa.dto.CommentsForm;
+import com.jaiplays.services.jpa.entity.Comments;
 import com.jaiplays.services.jpa.exception.CommentNotFoundException;
 import com.jaiplays.services.jpa.service.CommentsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,6 +48,13 @@ public class CommentsController {
         log.info("Delete Request received : {}",id);
         CommentsDTO commentsDTO = commentsService.deleteComment(id);
         return new ResponseEntity<>(commentsDTO, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CommentsDTO>> listAllComments(Pageable pageable){
+        log.info("Obtained list all request with pagination as {} and sorting as {}",pageable.getPageSize(),pageable.getSort().toString());
+        List<CommentsDTO> commentsDTOList   = commentsService.listAllComments(pageable);
+        return new ResponseEntity<>(commentsDTOList,HttpStatus.OK);
     }
 
     @ExceptionHandler(CommentNotFoundException.class)

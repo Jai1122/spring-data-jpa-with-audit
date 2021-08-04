@@ -6,7 +6,11 @@ import com.jaiplays.services.jpa.entity.Comments;
 import com.jaiplays.services.jpa.exception.CommentNotFoundException;
 import com.jaiplays.services.jpa.repository.CommentsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -73,5 +77,17 @@ public class CommentsService {
                 .lastModifiedAt(comment.getLastModifiedAt())
                 .lastModifiedBy(comment.getLastModifiedBy())
                 .build();
+    }
+
+    public List<CommentsDTO> listAllComments(Pageable pageable) {
+        return commentsRepository.findAll(pageable).map(comment -> CommentsDTO.builder()
+                .id(comment.getId())
+                .postName(comment.getPostName())
+                .comment(comment.getComment())
+                .createdAt(comment.getCreatedAt())
+                .lastModifiedAt(comment.getLastModifiedAt())
+                .lastModifiedBy(comment.getLastModifiedBy())
+                .build())
+                .stream().collect(Collectors.toList());
     }
 }
